@@ -9,5 +9,12 @@ import java.util.List;
 public interface AppliService {
 
     AppliDto createAppli(AppliDto appliDto);
+
     List<AppliDto> getAllAppli();
+
+    AppliDto getById(Long id);
+
+    AppliDto updateAppli(Long id , AppliDto appliDto);
+
+    void deleteAppli(Long id);
 }
