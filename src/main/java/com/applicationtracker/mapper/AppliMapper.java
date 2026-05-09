@@ -13,6 +13,7 @@ public class AppliMapper {
         app.setAppliDate(appliDto.getAppliDate());
         app.setStatus(appliDto.getStatus());
         app.setLocation(appliDto.getLocation());
+        app.setCareerLink(appliDto.getCareerLink());
 
         return app;
     }
@@ -25,6 +26,7 @@ public class AppliMapper {
         dto.setAppliDate(app.getAppliDate());
         dto.setStatus(app.getStatus());
         dto.setLocation(app.getLocation());
+        dto.setCareerLink(app.getCareerLink());
         return dto;
     }
 }

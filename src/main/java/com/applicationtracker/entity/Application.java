@@ -32,7 +32,7 @@ public class Application {
 
     private String status;
 
-
-
     private String location;
+
+    private String careerLink;
 }

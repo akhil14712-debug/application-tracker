@@ -4,8 +4,9 @@ import com.applicationtracker.dto.AppliDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
-@Service
+
 public interface AppliService {
 
     AppliDto createAppli(AppliDto appliDto);
@@ -17,4 +18,7 @@ public interface AppliService {
     AppliDto updateAppli(Long id , AppliDto appliDto);
 
     void deleteAppli(Long id);
+
+    Map<String ,Object> searchApplication(String name,int pageNo,int pageSize,String sortBy,String sortDir);
+
 }

@@ -24,4 +24,5 @@ public class AppliDto {
     private LocalDate appliDate;
     private String status;
     private String location;
+    private String careerLink;
 }

@@ -8,8 +8,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.service.annotation.GetExchange;
 
 import java.util.List;
+import java.util.Map;
+
+@CrossOrigin("*")
 
 @RestController
 @RequestMapping("/api/appli")
@@ -48,6 +52,16 @@ public class AppliationController {
     public ResponseEntity<String> deleteAppli(@PathVariable Long id ){
         service.deleteAppli(id);
         return new ResponseEntity<>("Deleted Successfully",HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity< Map<String ,Object> > filtering(@RequestParam(defaultValue = "") String name ,
+                                                    @RequestParam(defaultValue = "0") int pageNo ,
+                                                    @RequestParam(defaultValue = "10") int pageSize ,
+                                                    @RequestParam(defaultValue = "appId") String sortBy ,
+                                                    @RequestParam(defaultValue = "desc") String sortDir){
+        Map<String ,Object> result = service.searchApplication(name,pageNo,pageSize,sortBy,sortDir);
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
 
