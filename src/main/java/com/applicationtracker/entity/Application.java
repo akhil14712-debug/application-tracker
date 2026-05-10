@@ -30,9 +30,12 @@ public class Application {
     private LocalDate appliDate;
 
 
+    @Column(nullable = false)
     private String status;
 
+    @Column(nullable = false)
     private String location;
 
+    @Column(nullable = false)
     private String careerLink;
 }

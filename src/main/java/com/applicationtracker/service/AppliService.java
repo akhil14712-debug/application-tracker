@@ -21,4 +21,6 @@ public interface AppliService {
 
     Map<String ,Object> searchApplication(String name,int pageNo,int pageSize,String sortBy,String sortDir);
 
+    Map<String,Integer> countList();
+
 }

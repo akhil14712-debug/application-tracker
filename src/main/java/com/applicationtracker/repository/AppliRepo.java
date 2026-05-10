@@ -16,4 +16,7 @@ public interface AppliRepo extends JpaRepository<Application,Long> {
 
     @Query("Select a from Application a where lower(a.companyName) like lower(concat('%',:name,'%'))")
     Page<Application>  searchSortPagination(@Param("name") String name,Pageable pageable);
+
+
+    Integer countByStatus(String status);
 }

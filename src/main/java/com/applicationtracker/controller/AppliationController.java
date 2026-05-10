@@ -64,5 +64,11 @@ public class AppliationController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("count")
+    public ResponseEntity<Map<String,Integer>> totalCount(){
+        Map<String,Integer> ans = service.countList();
+        return new ResponseEntity<>(ans,HttpStatus.OK);
+    }
+
 
 }

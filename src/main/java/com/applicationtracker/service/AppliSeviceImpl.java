@@ -67,7 +67,21 @@ public class AppliSeviceImpl implements AppliService{
     @Override
     public Map<String, Object> searchApplication(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        String sortField = ( sortBy == null || sortBy.trim().isEmpty()) ? "appId":sortBy;
+        String sortField = "appId";
+                if( sortBy == null || sortBy.trim().isEmpty()){
+                    switch(sortBy.toLowerCase()){
+                        case "name":
+                            sortField = "companyName";
+                            break;
+                        case "role":
+                            sortField = "role";
+                            break;
+                        case "appliDate":
+                            sortField = "appliDate";
+                            break;
+
+                    }
+                }
 
 
 
@@ -95,6 +109,22 @@ public class AppliSeviceImpl implements AppliService{
         map1.put("paggination",map);
 
         return map1;
+    }
+
+    @Override
+    public Map<String, Integer> countList() {
+        int applyCount = appliRepo.countByStatus("Applied");
+        int active = appliRepo.countByStatus("Active");
+        int pending = appliRepo.countByStatus("Pending");
+        int intervi = appliRepo.countByStatus("Interview");
+
+        Map<String,Integer> result = new HashMap<>();
+        result.put("applyCnt",applyCount);
+        result.put("active",active);
+        result.put("pending",pending);
+        result.put("interv",intervi);
+
+        return result;
     }
 
 
