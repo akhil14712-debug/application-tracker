@@ -2,9 +2,11 @@ package com.applicationtracker.service;
 
 import com.applicationtracker.dto.AppliDto;
 import com.applicationtracker.entity.Application;
+import com.applicationtracker.entity.User;
 import com.applicationtracker.exception.ResourceNotFoundException;
 import com.applicationtracker.mapper.AppliMapper;
 import com.applicationtracker.repository.AppliRepo;
+import com.applicationtracker.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,30 +26,38 @@ import java.util.stream.Collectors;
 public class AppliSeviceImpl implements AppliService{
 
     private AppliRepo appliRepo;
+    private UserRepository urepo;
+
+
+
     @Override
-    public AppliDto createAppli(AppliDto appliDto) {
+    public AppliDto createAppli(AppliDto appliDto,Long userId) {
+        User user = urepo.findById(userId)
+                .orElseThrow(()->new ResourceNotFoundException("User not found"));
         Application app = AppliMapper.mapToAppli(appliDto);
+        app.setUser(user);
         return AppliMapper.mapToDto(appliRepo.save(app));
     }
 
     @Override
-    public List<AppliDto> getAllAppli() {
-        List<Application> list = appliRepo.findAll();
-        return list.stream()
+    public List<AppliDto> getAllAppli(Long userId) {
+
+        return appliRepo.findByUserId(userId)
+                .stream()
                 .map(AppliMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AppliDto getById(Long id) {
-        Application app = appliRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("The given id is not found"));
-
+    public AppliDto getById(Long id,Long userId) {
+        Application app = appliRepo.findByAppIdAndUserId(id,userId)
+                .orElseThrow(()->new ResourceNotFoundException("Application not found"));
         return AppliMapper.mapToDto(app);
     }
 
     @Override
-    public AppliDto updateAppli(Long id, AppliDto appliDto) {
-        Application appli = appliRepo.findById(id)
+    public AppliDto updateAppli(Long id, AppliDto appliDto,Long userId) {
+        Application appli = appliRepo.findByAppIdAndUserId(id,userId)
                 .orElseThrow(() -> new ResourceNotFoundException("The given id is not found"));
         appli.setCompanyName(appliDto.getCompanyName());
         appli.setRole(appliDto.getRole());
@@ -60,15 +70,18 @@ public class AppliSeviceImpl implements AppliService{
     }
 
     @Override
-    public void deleteAppli(Long id) {
+    public void deleteAppli(Long id,Long userId) {
+
+        appliRepo.findByAppIdAndUserId(id,userId)
+                .orElseThrow(()->new ResourceNotFoundException("The Appllication not found"));
         appliRepo.deleteById(id);
     }
 
     @Override
-    public Map<String, Object> searchApplication(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
+    public Map<String, Object> searchApplication(String name, int pageNo, int pageSize, String sortBy, String sortDir,Long userId) {
 
         String sortField = "appId";
-                if( sortBy == null || sortBy.trim().isEmpty()){
+                if( sortBy == null && sortBy.trim().isEmpty()){
                     switch(sortBy.toLowerCase()){
                         case "name":
                             sortField = "companyName";
@@ -91,7 +104,7 @@ public class AppliSeviceImpl implements AppliService{
 
         Pageable pageable = PageRequest.of(pageNo,pageSize,sort);
 
-        Page<Application> result = appliRepo.searchSortPagination(name,pageable);
+        Page<Application> result = appliRepo.searchSortPagination(name,userId,pageable);
 
         List<AppliDto> applilist = result.getContent()
                 .stream().map(AppliMapper::mapToDto)
@@ -112,11 +125,11 @@ public class AppliSeviceImpl implements AppliService{
     }
 
     @Override
-    public Map<String, Integer> countList() {
-        int applyCount = appliRepo.countByStatus("Applied");
-        int active = appliRepo.countByStatus("Active");
-        int pending = appliRepo.countByStatus("Pending");
-        int intervi = appliRepo.countByStatus("Interview");
+    public Map<String, Integer> countList(Long userId) {
+        int applyCount = appliRepo.countByStatusAndUserId("Applied",userId);
+        int active = appliRepo.countByStatusAndUserId("Active",userId);
+        int pending = appliRepo.countByStatusAndUserId("Pending",userId);
+        int intervi = appliRepo.countByStatusAndUserId("Interview",userId);
 
         Map<String,Integer> result = new HashMap<>();
         result.put("applyCnt",applyCount);

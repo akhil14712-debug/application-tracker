@@ -25,4 +25,5 @@ public class AppliDto {
     private String status;
     private String location;
     private String careerLink;
+    private Long userId;
 }
