@@ -21,9 +21,11 @@ public class Resume {
     @JoinColumn(name= "user_id")
     private User user;
 
-    private String originalFileName;
-    private String storedFilName;
-    private String filePath;
+    private String fileName;
+    private String fileUrl;
+
     private String fileType;
-    private LocalDateTime uploadedAt;
+    private Long fileSize;
+    private String publicId;
+    private LocalDateTime uploadedAt = LocalDateTime.now();
 }
