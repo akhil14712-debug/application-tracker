@@ -11,19 +11,25 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     private Long id;
-    private String username;
+    private String email;
     private String password;
+    private String displayName;
 
     public CustomUserDetails(User user){
         this.id = user.getId();
-        this.username = user.getUsername();
+        this.email = user.getEmail();
         this.password = user.getPassword();
+        this.displayName = user.getUsername();
     }
 
     public Long getId(){
         return id;
     }
 
+    public String getDisplayName(){
+        return displayName;
+
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -37,7 +43,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

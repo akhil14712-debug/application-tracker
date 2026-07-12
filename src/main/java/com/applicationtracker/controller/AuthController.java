@@ -1,6 +1,7 @@
 package com.applicationtracker.controller;
 
 import com.applicationtracker.dto.AuthRequest;
+import com.applicationtracker.entity.User;
 import com.applicationtracker.service.UserService;
 import com.applicationtracker.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest req){
         System.out.println("REGISTER API HIT");
-        userService.register(req.getUsername() , req.getPassword());
+        userService.register(req.getEmail() , req.getPassword(),req.getUsername());
 
         return ResponseEntity.ok("User registered");
     }
@@ -36,9 +37,9 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody AuthRequest req){
         try {
             authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+                    new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
             );
-            String token = jwtUtil.generateToken(req.getUsername());
+            String token = jwtUtil.generateToken(req.getEmail());
             return ResponseEntity.ok(Map.of("token", token));
         }catch (Exception e){
             e.printStackTrace();
@@ -49,7 +50,9 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader){
         String token = authHeader.substring(7);
-        String username = jwtUtil.extractUsername(token);
-        return ResponseEntity.ok(Map.of("username", username));
+        String email = jwtUtil.extractUsername(token);
+
+        User user = userService.findByEmail(email);
+        return ResponseEntity.ok(Map.of("email", user.getEmail(),"username",user.getUsername()));
     }
 }

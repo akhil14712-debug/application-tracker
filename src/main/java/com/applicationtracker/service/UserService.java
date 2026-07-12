@@ -21,9 +21,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new ResourceNotFoundException("The given username is not found"));
 
         return new CustomUserDetails(user);
@@ -31,11 +31,16 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public void register(String username ,String password){
-        if(userRepository.existsByUsername(username)){
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    }
+    public void register(String email ,String password , String username){
+        if(userRepository.existsByEmail(email)){
             throw new RuntimeException("Username already taken");
         }
         User user = new User();
+        user.setEmail(email);
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
